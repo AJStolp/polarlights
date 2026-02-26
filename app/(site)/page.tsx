@@ -66,8 +66,8 @@ export default async function Home() {
       <section className="relative min-h-[90vh] flex items-center">
         <div className="absolute inset-0 z-0">
           <Image
-            src="https://images.unsplash.com/photo-1473968512647-3e447244af8f?w=1920&h=1080&fit=crop"
-            alt="Aerial drone photography"
+            src="https://images.unsplash.com/photo-1760638346074-e65e53d31e78?w=1920&h=1080&fit=crop"
+            alt="DJI Mavic 4 Pro drone in flight over forest"
             fill
             className="object-cover"
             priority
