@@ -1,9 +1,37 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 export default function ContactPage() {
-  const [submitted, setSubmitted] = useState(false);
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const formRef = useRef<HTMLFormElement>(null);
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setStatus("sending");
+
+    const formData = new FormData(e.currentTarget);
+    const data = {
+      name: formData.get("name"),
+      email: formData.get("email"),
+      service: formData.get("service"),
+      message: formData.get("message"),
+    };
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      if (!res.ok) throw new Error("Failed to send");
+      setStatus("sent");
+      formRef.current?.reset();
+    } catch {
+      setStatus("error");
+    }
+  }
 
   return (
     <>
@@ -25,7 +53,7 @@ export default function ContactPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
             {/* Form */}
             <div>
-              {submitted ? (
+              {status === "sent" ? (
                 <div className="bg-accent/5 border border-accent/20 rounded-2xl p-8 text-center">
                   <svg
                     className="w-12 h-12 text-accent mx-auto mb-4"
@@ -48,13 +76,7 @@ export default function ContactPage() {
                   </p>
                 </div>
               ) : (
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    setSubmitted(true);
-                  }}
-                  className="space-y-6"
-                >
+                <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
                   <div>
                     <label
                       htmlFor="name"
@@ -65,6 +87,7 @@ export default function ContactPage() {
                     <input
                       type="text"
                       id="name"
+                      name="name"
                       required
                       className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-colors"
                       placeholder="Your name"
@@ -80,6 +103,7 @@ export default function ContactPage() {
                     <input
                       type="email"
                       id="email"
+                      name="email"
                       required
                       className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-colors"
                       placeholder="you@example.com"
@@ -94,14 +118,15 @@ export default function ContactPage() {
                     </label>
                     <select
                       id="service"
+                      name="service"
                       className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-colors bg-white"
                     >
                       <option value="">Select a service</option>
-                      <option value="photo">Drone Photography</option>
-                      <option value="video">Cinematic Videography</option>
-                      <option value="matterport">3D Matterport Tour</option>
-                      <option value="bundle">Multiple Services</option>
-                      <option value="other">Other</option>
+                      <option value="Drone Photography">Drone Photography</option>
+                      <option value="Cinematic Videography">Cinematic Videography</option>
+                      <option value="3D Matterport Tour">3D Matterport Tour</option>
+                      <option value="Multiple Services">Multiple Services</option>
+                      <option value="Other">Other</option>
                     </select>
                   </div>
                   <div>
@@ -113,17 +138,26 @@ export default function ContactPage() {
                     </label>
                     <textarea
                       id="message"
+                      name="message"
                       rows={5}
                       required
                       className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-colors resize-none"
                       placeholder="Tell us about your project..."
                     />
                   </div>
+
+                  {status === "error" && (
+                    <p className="text-red-500 text-sm">
+                      Something went wrong. Please try again or email us directly.
+                    </p>
+                  )}
+
                   <button
                     type="submit"
-                    className="w-full bg-accent text-white font-medium py-3.5 rounded-full hover:bg-accent-dark transition-colors"
+                    disabled={status === "sending"}
+                    className="w-full bg-accent text-white font-medium py-3.5 rounded-full hover:bg-accent-dark transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                   >
-                    Send Message
+                    {status === "sending" ? "Sending..." : "Send Message"}
                   </button>
                 </form>
               )}
