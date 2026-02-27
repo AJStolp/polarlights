@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
+import { getAboutPage } from "@/sanity/queries";
+import { urlFor } from "@/sanity/image";
 
 export const metadata: Metadata = {
   title: "About | Polar Lights Imaging",
@@ -8,24 +10,73 @@ export const metadata: Metadata = {
     "Learn about Polar Lights Imaging — professional drone photography and 3D tours serving Wisconsin and Michigan's Upper Peninsula.",
 };
 
-const stats = [
+const defaultStats = [
   { label: "Projects Completed", value: "200+" },
   { label: "Happy Clients", value: "75+" },
   { label: "Years Experience", value: "3+" },
   { label: "States Covered", value: "2" },
 ];
 
-export default function AboutPage() {
+const defaultStory = [
+  "Polar Lights Imaging was founded with a simple mission: to help people see their properties, events, and landscapes from a perspective they've never experienced before.",
+  "What started as a passion for flying and photography has grown into a full-service aerial imaging company. We combine professional-grade drones with creative vision to deliver stunning results for every project.",
+  "From sweeping aerial photography to immersive Matterport 3D tours, we bring the tools and expertise to make your project stand out. Whether you're a realtor, event planner, construction company, or just someone who wants incredible aerial shots — we've got you covered.",
+];
+
+const defaultServiceAreas = [
+  "Waupaca, WI",
+  "Pembine, WI",
+  "Kimberly, WI",
+  "New London, WI",
+  "Holy Hill, WI",
+  "Menominee, MI",
+  "Houghton, MI",
+  "Michigamme, MI",
+  "Kitch-iti-kipi, MI",
+  "Porcupine Mountains, MI",
+];
+
+export default async function AboutPage() {
+  let page = null;
+  try {
+    page = await getAboutPage();
+  } catch {
+    // Fall back to defaults
+  }
+
+  const stats =
+    page?.stats && page.stats.length > 0
+      ? page.stats.map((s) => ({
+          value: s.value || "",
+          label: s.label || "",
+        }))
+      : defaultStats;
+
+  const storyParagraphs =
+    page?.storyParagraphs && page.storyParagraphs.length > 0
+      ? page.storyParagraphs
+      : defaultStory;
+
+  const serviceAreas =
+    page?.serviceAreas && page.serviceAreas.length > 0
+      ? page.serviceAreas
+      : defaultServiceAreas;
+
+  const storyImage = page?.storyImage
+    ? urlFor(page.storyImage).width(800).height(600).url()
+    : "https://images.unsplash.com/photo-1527977966376-1c8408f9f108?w=800&h=600&fit=crop";
+
   return (
     <>
       {/* Header */}
       <section className="py-24 bg-gray-50">
         <div className="max-w-7xl mx-auto px-6 lg:px-8 text-center">
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900">
-            About Us
+            {page?.heading || "About Us"}
           </h1>
           <p className="mt-4 text-gray-500 text-lg max-w-2xl mx-auto">
-            Capturing the world from above, one flight at a time.
+            {page?.subtitle ||
+              "Capturing the world from above, one flight at a time."}
           </p>
         </div>
       </section>
@@ -36,7 +87,7 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div className="relative aspect-[4/3] rounded-2xl overflow-hidden">
               <Image
-                src="https://images.unsplash.com/photo-1527977966376-1c8408f9f108?w=800&h=600&fit=crop"
+                src={storyImage}
                 alt="Drone pilot at work"
                 fill
                 className="object-cover"
@@ -44,27 +95,12 @@ export default function AboutPage() {
             </div>
             <div>
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-                Our Story
+                {page?.storyHeading || "Our Story"}
               </h2>
               <div className="space-y-4 text-gray-500 leading-relaxed">
-                <p>
-                  Polar Lights Imaging was founded with a simple mission: to help
-                  people see their properties, events, and landscapes from a
-                  perspective they&apos;ve never experienced before.
-                </p>
-                <p>
-                  What started as a passion for flying and photography has grown
-                  into a full-service aerial imaging company. We combine
-                  professional-grade drones with creative vision to deliver
-                  stunning results for every project.
-                </p>
-                <p>
-                  From sweeping aerial photography to immersive Matterport 3D
-                  tours, we bring the tools and expertise to make your project
-                  stand out. Whether you&apos;re a realtor, event planner,
-                  construction company, or just someone who wants incredible
-                  aerial shots &mdash; we&apos;ve got you covered.
-                </p>
+                {storyParagraphs.map((paragraph, i) => (
+                  <p key={i}>{paragraph}</p>
+                ))}
               </div>
             </div>
           </div>
@@ -75,8 +111,8 @@ export default function AboutPage() {
       <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {stats.map((stat) => (
-              <div key={stat.label} className="text-center">
+            {stats.map((stat, i) => (
+              <div key={i} className="text-center">
                 <p className="text-3xl md:text-4xl font-bold text-accent">
                   {stat.value}
                 </p>
@@ -91,28 +127,16 @@ export default function AboutPage() {
       <section className="py-24">
         <div className="max-w-7xl mx-auto px-6 lg:px-8 text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            Service Area
+            {page?.serviceAreaHeading || "Service Area"}
           </h2>
           <p className="text-gray-500 text-lg max-w-2xl mx-auto mb-8">
-            We proudly serve communities across Wisconsin and Michigan&apos;s
-            Upper Peninsula. Need coverage outside our area? Reach out &mdash;
-            we love to travel for the right project.
+            {page?.serviceAreaDescription ||
+              "We proudly serve communities across Wisconsin and Michigan's Upper Peninsula. Need coverage outside our area? Reach out — we love to travel for the right project."}
           </p>
           <div className="flex flex-wrap justify-center gap-3">
-            {[
-              "Waupaca, WI",
-              "Pembine, WI",
-              "Kimberly, WI",
-              "New London, WI",
-              "Holy Hill, WI",
-              "Menominee, MI",
-              "Houghton, MI",
-              "Michigamme, MI",
-              "Kitch-iti-kipi, MI",
-              "Porcupine Mountains, MI",
-            ].map((loc) => (
+            {serviceAreas.map((loc, i) => (
               <span
-                key={loc}
+                key={i}
                 className="bg-gray-100 text-gray-600 text-sm px-4 py-2 rounded-full"
               >
                 {loc}
@@ -126,10 +150,11 @@ export default function AboutPage() {
       <section className="py-24 bg-gray-900">
         <div className="max-w-4xl mx-auto px-6 lg:px-8 text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-white">
-            Let&apos;s work together
+            {page?.ctaHeading || "Let's work together"}
           </h2>
           <p className="mt-4 text-gray-400 text-lg">
-            Have a project in mind? We&apos;d love to hear about it.
+            {page?.ctaDescription ||
+              "Have a project in mind? We'd love to hear about it."}
           </p>
           <Link
             href="/contact"

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { getFeaturedItems } from "@/sanity/queries";
+import { getFeaturedItems, getHomePage } from "@/sanity/queries";
 import { urlFor } from "@/sanity/image";
 
 const services = [
@@ -38,16 +38,25 @@ const services = [
 ];
 
 const placeholderFeatured = [
-  { src: "https://images.unsplash.com/photo-1473968512647-3e447244af8f?w=800&h=600&fit=crop", alt: "Aerial landscape" },
-  { src: "https://images.unsplash.com/photo-1506947411487-a56738571f73?w=800&h=600&fit=crop", alt: "Drone sunset" },
-  { src: "https://images.unsplash.com/photo-1508444845599-5c89863b1c44?w=800&h=600&fit=crop", alt: "Aerial forest" },
-  { src: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=800&h=600&fit=crop", alt: "City aerial" },
-  { src: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&h=600&fit=crop", alt: "Rural landscape" },
-  { src: "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&h=600&fit=crop", alt: "Mountain aerial" },
+  { src: "https://images.unsplash.com/photo-1473968512647-3e447244af8f?w=800&h=600&fit=crop", alt: "Aerial landscape", title: "Aerial Landscape", location: "" },
+  { src: "https://images.unsplash.com/photo-1506947411487-a56738571f73?w=800&h=600&fit=crop", alt: "Drone sunset", title: "Drone Sunset", location: "" },
+  { src: "https://images.unsplash.com/photo-1508444845599-5c89863b1c44?w=800&h=600&fit=crop", alt: "Aerial forest", title: "Aerial Forest", location: "" },
+  { src: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=800&h=600&fit=crop", alt: "City aerial", title: "City Aerial", location: "" },
+  { src: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&h=600&fit=crop", alt: "Rural landscape", title: "Rural Landscape", location: "" },
+  { src: "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&h=600&fit=crop", alt: "Mountain aerial", title: "Mountain Aerial", location: "" },
 ];
+
+const defaultHeroImage = "https://images.unsplash.com/photo-1760638346074-e65e53d31e78?w=1920&h=1080&fit=crop";
 
 export default async function Home() {
   let featuredWork = placeholderFeatured;
+  let page = null;
+
+  try {
+    page = await getHomePage();
+  } catch {
+    // Fall back to defaults
+  }
 
   try {
     const sanityFeatured = await getFeaturedItems();
@@ -55,18 +64,25 @@ export default async function Home() {
       featuredWork = sanityFeatured.map((item) => ({
         src: urlFor(item.image).width(800).height(600).url(),
         alt: item.title,
+        title: item.title,
+        location: item.location || "",
       }));
     }
   } catch {
     // Fall back to placeholders
   }
+
+  const heroImage = page?.heroImage
+    ? urlFor(page.heroImage).width(1920).height(1080).url()
+    : defaultHeroImage;
+
   return (
     <>
       {/* Hero */}
       <section className="relative min-h-[90vh] flex items-center">
         <div className="absolute inset-0 z-0">
           <Image
-            src="https://images.unsplash.com/photo-1760638346074-e65e53d31e78?w=1920&h=1080&fit=crop"
+            src={heroImage}
             alt="DJI Mavic 4 Pro drone in flight over forest"
             fill
             className="object-cover"
@@ -77,12 +93,14 @@ export default async function Home() {
         <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 py-32">
           <div className="max-w-2xl">
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-gray-900 leading-[1.1]">
-              Elevate Your
-              <span className="text-accent block">Perspective</span>
+              {page?.heroHeadline || "Elevate Your"}
+              <span className="text-accent block">
+                {page?.heroAccent || "Perspective"}
+              </span>
             </h1>
             <p className="mt-6 text-lg md:text-xl text-gray-600 leading-relaxed max-w-lg">
-              Professional drone photography, cinematic video, and immersive 3D
-              tours that showcase your world from above.
+              {page?.heroDescription ||
+                "Professional drone photography, cinematic video, and immersive 3D tours that showcase your world from above."}
             </p>
             <div className="mt-10 flex flex-col sm:flex-row gap-4">
               <Link
@@ -107,11 +125,11 @@ export default async function Home() {
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
-              What We Do
+              {page?.servicesHeading || "What We Do"}
             </h2>
             <p className="mt-4 text-gray-500 text-lg">
-              From aerial photography to virtual reality tours, we capture
-              perspectives that make an impact.
+              {page?.servicesDescription ||
+                "From aerial photography to virtual reality tours, we capture perspectives that make an impact."}
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -152,10 +170,10 @@ export default async function Home() {
           <div className="flex items-end justify-between mb-12">
             <div>
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
-                Featured Work
+                {page?.featuredHeading || "Featured Work"}
               </h2>
               <p className="mt-4 text-gray-500 text-lg">
-                A selection of our recent projects.
+                {page?.featuredDescription || "A selection of our recent projects."}
               </p>
             </div>
             <Link
@@ -180,7 +198,13 @@ export default async function Home() {
                   fill
                   className="object-cover transition-transform duration-500 group-hover:scale-105"
                 />
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-4">
+                  <p className="text-white font-medium text-sm">{item.title}</p>
+                  {item.location && (
+                    <p className="text-white/70 text-xs mt-0.5">{item.location}</p>
+                  )}
+                </div>
               </div>
             ))}
           </div>
@@ -202,12 +226,11 @@ export default async function Home() {
       <section className="py-24 bg-gray-900">
         <div className="max-w-4xl mx-auto px-6 lg:px-8 text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-white">
-            Ready to see your world from a new angle?
+            {page?.ctaHeading || "Ready to see your world from a new angle?"}
           </h2>
           <p className="mt-4 text-gray-400 text-lg max-w-2xl mx-auto">
-            Whether it&apos;s real estate, events, construction, or just
-            capturing the beauty of a location &mdash; we&apos;ll make it look
-            incredible.
+            {page?.ctaDescription ||
+              "Whether it's real estate, events, construction, or just capturing the beauty of a location — we'll make it look incredible."}
           </p>
           <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
             <Link

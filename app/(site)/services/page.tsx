@@ -1,6 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import type { Metadata } from "next";
+import { getServicesPage } from "@/sanity/queries";
+import { urlFor } from "@/sanity/image";
 
 export const metadata: Metadata = {
   title: "Services | Polar Lights Imaging",
@@ -8,7 +10,7 @@ export const metadata: Metadata = {
     "Drone photography, cinematic aerial video, and Matterport 3D virtual tours for real estate, events, and more.",
 };
 
-const services = [
+const defaultServices = [
   {
     title: "Drone Photography",
     subtitle: "Aerial perspectives that captivate",
@@ -56,18 +58,38 @@ const services = [
   },
 ];
 
-export default function ServicesPage() {
+export default async function ServicesPage() {
+  let page = null;
+  try {
+    page = await getServicesPage();
+  } catch {
+    // Fall back to defaults
+  }
+
+  const servicesList =
+    page?.services && page.services.length > 0
+      ? page.services.map((s) => ({
+          title: s.title || "",
+          subtitle: s.subtitle || "",
+          description: s.description || "",
+          features: s.features || [],
+          image: s.image
+            ? urlFor(s.image).width(800).height(600).url()
+            : "",
+        }))
+      : defaultServices;
+
   return (
     <>
       {/* Header */}
       <section className="py-24 bg-gray-50">
         <div className="max-w-7xl mx-auto px-6 lg:px-8 text-center">
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900">
-            Our Services
+            {page?.heading || "Our Services"}
           </h1>
           <p className="mt-4 text-gray-500 text-lg max-w-2xl mx-auto">
-            Professional aerial imaging and virtual tour solutions tailored to
-            your needs.
+            {page?.description ||
+              "Professional aerial imaging and virtual tour solutions tailored to your needs."}
           </p>
         </div>
       </section>
@@ -75,9 +97,9 @@ export default function ServicesPage() {
       {/* Services */}
       <section className="py-24">
         <div className="max-w-7xl mx-auto px-6 lg:px-8 space-y-32">
-          {services.map((service, i) => (
+          {servicesList.map((service, i) => (
             <div
-              key={service.title}
+              key={i}
               className={`grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center ${
                 i % 2 === 1 ? "lg:direction-rtl" : ""
               }`}
@@ -93,9 +115,9 @@ export default function ServicesPage() {
                   {service.description}
                 </p>
                 <ul className="space-y-3 mb-8">
-                  {service.features.map((feature) => (
+                  {service.features.map((feature, fi) => (
                     <li
-                      key={feature}
+                      key={fi}
                       className="flex items-center gap-3 text-gray-600"
                     >
                       <svg
@@ -127,12 +149,14 @@ export default function ServicesPage() {
                   i % 2 === 1 ? "lg:order-1" : ""
                 }`}
               >
-                <Image
-                  src={service.image}
-                  alt={service.title}
-                  fill
-                  className="object-cover"
-                />
+                {service.image && (
+                  <Image
+                    src={service.image}
+                    alt={service.title}
+                    fill
+                    className="object-cover"
+                  />
+                )}
               </div>
             </div>
           ))}
@@ -143,11 +167,11 @@ export default function ServicesPage() {
       <section className="py-24 bg-gray-50">
         <div className="max-w-4xl mx-auto px-6 lg:px-8 text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
-            Not sure what you need?
+            {page?.ctaHeading || "Not sure what you need?"}
           </h2>
           <p className="mt-4 text-gray-500 text-lg max-w-xl mx-auto">
-            Tell us about your project and we&apos;ll recommend the best
-            solution. Every project gets a custom quote.
+            {page?.ctaDescription ||
+              "Tell us about your project and we'll recommend the best solution. Every project gets a custom quote."}
           </p>
           <Link
             href="/contact"

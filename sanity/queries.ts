@@ -1,4 +1,6 @@
-import { client } from "./client";
+import { sanityFetch } from "./fetch";
+
+// --- Portfolio ---
 
 export interface PortfolioItem {
   _id: string;
@@ -20,31 +22,94 @@ export interface PortfolioItem {
 }
 
 export async function getPortfolioItems(): Promise<PortfolioItem[]> {
-  return client.fetch(
-    `*[_type == "portfolioItem"] | order(order asc, _createdAt desc) {
-      _id,
-      title,
-      image,
-      category,
-      location,
-      description,
-      featured,
-      order
-    }`
-  );
+  return sanityFetch<PortfolioItem[]>({
+    query: `*[_type == "portfolioItem"] | order(order asc, _createdAt desc) {
+      _id, title, image, category, location, description, featured, order
+    }`,
+  });
 }
 
 export async function getFeaturedItems(): Promise<PortfolioItem[]> {
-  return client.fetch(
-    `*[_type == "portfolioItem" && featured == true] | order(order asc, _createdAt desc) [0...6] {
-      _id,
-      title,
-      image,
-      category,
-      location,
-      description,
-      featured,
-      order
-    }`
-  );
+  return sanityFetch<PortfolioItem[]>({
+    query: `*[_type == "portfolioItem" && featured == true] | order(order asc, _createdAt desc) [0...6] {
+      _id, title, image, category, location, description, featured, order
+    }`,
+  });
+}
+
+// --- Page Singletons ---
+
+export interface HomePageData {
+  heroHeadline?: string;
+  heroAccent?: string;
+  heroDescription?: string;
+  heroImage?: { asset: { _ref: string } };
+  servicesHeading?: string;
+  servicesDescription?: string;
+  featuredHeading?: string;
+  featuredDescription?: string;
+  ctaHeading?: string;
+  ctaDescription?: string;
+}
+
+export async function getHomePage(): Promise<HomePageData | null> {
+  return sanityFetch<HomePageData | null>({
+    query: `*[_type == "homePage"][0]`,
+  });
+}
+
+export interface ServiceItem {
+  _key: string;
+  title?: string;
+  subtitle?: string;
+  description?: string;
+  features?: string[];
+  image?: { asset: { _ref: string } };
+}
+
+export interface ServicesPageData {
+  heading?: string;
+  description?: string;
+  services?: ServiceItem[];
+  ctaHeading?: string;
+  ctaDescription?: string;
+}
+
+export async function getServicesPage(): Promise<ServicesPageData | null> {
+  return sanityFetch<ServicesPageData | null>({
+    query: `*[_type == "servicesPage"][0]`,
+  });
+}
+
+export interface AboutPageData {
+  heading?: string;
+  subtitle?: string;
+  storyHeading?: string;
+  storyImage?: { asset: { _ref: string } };
+  storyParagraphs?: string[];
+  stats?: { _key: string; value?: string; label?: string }[];
+  serviceAreaHeading?: string;
+  serviceAreaDescription?: string;
+  serviceAreas?: string[];
+  ctaHeading?: string;
+  ctaDescription?: string;
+}
+
+export async function getAboutPage(): Promise<AboutPageData | null> {
+  return sanityFetch<AboutPageData | null>({
+    query: `*[_type == "aboutPage"][0]`,
+  });
+}
+
+export interface ContactPageData {
+  heading?: string;
+  description?: string;
+  email?: string;
+  serviceAreaDescription?: string;
+}
+
+export async function getContactPage(): Promise<ContactPageData | null> {
+  return sanityFetch<ContactPageData | null>({
+    query: `*[_type == "contactPage"][0]`,
+  });
 }
