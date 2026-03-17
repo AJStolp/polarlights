@@ -3,6 +3,7 @@ import PortfolioGrid from "@/components/PortfolioGrid";
 import type { PortfolioDisplayItem } from "@/components/PortfolioGrid";
 import { getPortfolioItems } from "@/sanity/queries";
 import { urlFor } from "@/sanity/image";
+import { stegaClean } from "@sanity/client/stega";
 
 export const metadata: Metadata = {
   title: "Portfolio | Polar Lights Imaging",
@@ -36,7 +37,7 @@ export default async function PortfolioPage() {
         id: item._id,
         src: urlFor(item.image!).width(800).height(600).url(),
         alt: item.title || "Portfolio item",
-        category: item.category || "Aerial Photo",
+        category: stegaClean(item.category) || "Aerial Photo",
         location: item.location,
       }));
     items = mapped.length > 0 ? mapped : placeholderItems;
