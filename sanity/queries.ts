@@ -4,8 +4,8 @@ import { sanityFetch } from "./fetch";
 
 export interface PortfolioItem {
   _id: string;
-  title: string;
-  image: {
+  title?: string;
+  image?: {
     asset: {
       _ref: string;
     };
@@ -14,7 +14,7 @@ export interface PortfolioItem {
       y: number;
     };
   };
-  category: "Aerial Photo" | "Video" | "3D Tours";
+  category?: "Aerial Photo" | "Video" | "3D Tours";
   location?: string;
   description?: string;
   featured?: boolean;
