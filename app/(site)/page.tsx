@@ -60,15 +60,16 @@ export default async function Home() {
 
   try {
     const sanityFeatured = await getFeaturedItems();
-    if (sanityFeatured.length > 0) {
-      featuredWork = sanityFeatured
-        .filter((item) => item.image)
-        .map((item) => ({
-          src: urlFor(item.image!).width(800).height(600).url(),
-          alt: item.title || "Featured item",
-          title: item.title || "Untitled",
-          location: item.location || "",
-        }));
+    const mapped = sanityFeatured
+      .filter((item) => item.image)
+      .map((item) => ({
+        src: urlFor(item.image!).width(800).height(600).url(),
+        alt: item.title || "Featured item",
+        title: item.title || "Untitled",
+        location: item.location || "",
+      }));
+    if (mapped.length > 0) {
+      featuredWork = mapped;
     }
   } catch {
     // Fall back to placeholders
