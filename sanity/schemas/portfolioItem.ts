@@ -9,14 +9,12 @@ export const portfolioItem = defineType({
       name: "title",
       title: "Title",
       type: "string",
-      validation: (rule) => rule.required(),
     }),
     defineField({
       name: "image",
       title: "Image",
       type: "image",
       options: { hotspot: true },
-      validation: (rule) => rule.required(),
     }),
     defineField({
       name: "category",
@@ -29,7 +27,6 @@ export const portfolioItem = defineType({
           { title: "3D Tours", value: "3D Tours" },
         ],
       },
-      validation: (rule) => rule.required(),
     }),
     defineField({
       name: "location",

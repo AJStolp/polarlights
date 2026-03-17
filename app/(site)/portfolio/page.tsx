@@ -31,13 +31,15 @@ export default async function PortfolioPage() {
   try {
     const sanityItems = await getPortfolioItems();
     if (sanityItems.length > 0) {
-      items = sanityItems.map((item) => ({
-        id: item._id,
-        src: urlFor(item.image).width(800).height(600).url(),
-        alt: item.title,
-        category: item.category,
-        location: item.location,
-      }));
+      items = sanityItems
+        .filter((item) => item.image)
+        .map((item) => ({
+          id: item._id,
+          src: urlFor(item.image!).width(800).height(600).url(),
+          alt: item.title || "Portfolio item",
+          category: item.category || "Aerial Photo",
+          location: item.location,
+        }));
     } else {
       items = placeholderItems;
     }
