@@ -37,6 +37,35 @@ export async function getFeaturedItems(): Promise<PortfolioItem[]> {
   });
 }
 
+// --- Virtual Tours ---
+
+export interface VirtualTour {
+  _id: string;
+  title: string;
+  description?: string;
+  thumbnail?: {
+    asset: {
+      _ref: string;
+    };
+    hotspot?: {
+      x: number;
+      y: number;
+    };
+  };
+  embedUrl?: string;
+  externalLink?: string;
+  location?: string;
+  order?: number;
+}
+
+export async function getVirtualTours(): Promise<VirtualTour[]> {
+  return sanityFetch<VirtualTour[]>({
+    query: `*[_type == "virtualTour"] | order(order asc, _createdAt desc) {
+      _id, title, description, thumbnail, embedUrl, externalLink, location, order
+    }`,
+  });
+}
+
 // --- Page Singletons ---
 
 export interface HomePageData {
