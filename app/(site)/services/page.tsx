@@ -110,7 +110,9 @@ export default async function ServicesPage() {
           description: s.description || "",
           features: s.features || [],
           image: s.image
-            ? urlFor(s.image).width(800).height(600).url()
+            ? (s.imageSize && s.imageSize !== "full"
+                ? urlFor(s.image).width(800).url()
+                : urlFor(s.image).width(800).height(600).url())
             : "",
           imageSize: (s.imageSize || "full") as "full" | "large" | "medium",
         }))
