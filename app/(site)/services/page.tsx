@@ -56,6 +56,21 @@ const defaultServices = [
     image:
       "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=800&h=600&fit=crop",
   },
+  {
+    title: "Interior & Exterior Photography",
+    subtitle: "Every angle, every detail",
+    description:
+      "Professional ground-level photography that complements our aerial services. We capture crisp, well-lit interior and exterior photos that highlight the best features of any property or space — from wide-angle room shots to detailed architectural exteriors.",
+    features: [
+      "HDR interior photography",
+      "Exterior & curb appeal shots",
+      "Twilight & golden hour sessions",
+      "Detail & feature close-ups",
+      "Professionally edited & delivered",
+    ],
+    image:
+      "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=600&fit=crop",
+  },
 ];
 
 export default async function ServicesPage() {

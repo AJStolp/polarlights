@@ -35,7 +35,7 @@ export default async function PortfolioPage() {
       .map((item) => ({
         id: item._id,
         src: urlFor(item.image!).width(800).height(600).url(),
-        alt: item.title || "Portfolio item",
+        alt: item.title || "",
         category: item.category || "Aerial Photo",
         location: item.location,
       }));

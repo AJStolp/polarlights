@@ -60,7 +60,7 @@ export default function PortfolioGrid({ items }: PortfolioGridProps) {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
             <div className="absolute bottom-0 left-0 right-0 p-4">
-              <p className="text-white font-medium text-sm">{item.alt}</p>
+              {item.alt && <p className="text-white font-medium text-sm">{item.alt}</p>}
               {item.location && (
                 <p className="text-white/70 text-xs mt-0.5">{item.location}</p>
               )}
