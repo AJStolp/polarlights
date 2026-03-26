@@ -110,9 +110,7 @@ export default async function ServicesPage() {
           description: s.description || "",
           features: s.features || [],
           image: s.image
-            ? (s.imageSize && s.imageSize !== "full"
-                ? urlFor(s.image).width(800).url()
-                : urlFor(s.image).width(800).height(600).url())
+            ? urlFor(s.image).width(800).url()
             : "",
           imageSize: (s.imageSize || "full") as "full" | "large" | "medium",
         }))
@@ -185,7 +183,7 @@ export default async function ServicesPage() {
                   Get a Quote
                 </Link>
               </div>
-              {service.image && service.imageSize === "full" && (
+              {service.image && (
                 <div
                   className={`relative aspect-[4/3] rounded-2xl overflow-hidden ${
                     i % 2 === 1 ? "lg:order-1" : ""
@@ -195,24 +193,7 @@ export default async function ServicesPage() {
                     src={service.image}
                     alt={service.title}
                     fill
-                    className="object-cover"
-                  />
-                </div>
-              )}
-              {service.image && service.imageSize !== "full" && (
-                <div
-                  className={`flex items-center justify-center rounded-2xl ${
-                    i % 2 === 1 ? "lg:order-1" : ""
-                  }`}
-                >
-                  <Image
-                    src={service.image}
-                    alt={service.title}
-                    width={800}
-                    height={600}
-                    className={`h-auto object-contain ${
-                      service.imageSize === "large" ? "w-3/4" : "w-1/2"
-                    } mx-auto`}
+                    className="object-contain"
                   />
                 </div>
               )}
