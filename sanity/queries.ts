@@ -94,6 +94,7 @@ export interface ServiceItem {
   description?: string;
   features?: string[];
   image?: { asset: { _ref: string } };
+  imageFit?: "cover" | "contain";
 }
 
 export interface ServicesPageData {

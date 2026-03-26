@@ -25,6 +25,7 @@ const defaultServices = [
     ],
     image:
       "https://images.unsplash.com/photo-1473968512647-3e447244af8f?w=800&h=600&fit=crop",
+    imageFit: "cover" as const,
   },
   {
     title: "Cinematic Videography",
@@ -40,6 +41,7 @@ const defaultServices = [
     ],
     image:
       "https://images.unsplash.com/photo-1506947411487-a56738571f73?w=800&h=600&fit=crop",
+    imageFit: "cover" as const,
   },
   {
     title: "3D Matterport Tours",
@@ -55,6 +57,7 @@ const defaultServices = [
     ],
     image:
       "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=800&h=600&fit=crop",
+    imageFit: "cover" as const,
   },
   {
     title: "Interior & Exterior Photography",
@@ -70,6 +73,7 @@ const defaultServices = [
     ],
     image:
       "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=600&fit=crop",
+    imageFit: "cover" as const,
   },
 ];
 
@@ -95,6 +99,7 @@ export default async function ServicesPage() {
     ],
     image:
       "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=600&fit=crop",
+    imageFit: "cover" as const,
   };
 
   const cmsServices =
@@ -107,6 +112,7 @@ export default async function ServicesPage() {
           image: s.image
             ? urlFor(s.image).width(800).height(600).url()
             : "",
+          imageFit: (s.imageFit || "cover") as "cover" | "contain",
         }))
       : defaultServices;
 
@@ -187,7 +193,7 @@ export default async function ServicesPage() {
                     src={service.image}
                     alt={service.title}
                     fill
-                    className="object-contain"
+                    className={service.imageFit === "contain" ? "object-contain" : "object-cover"}
                   />
                 )}
               </div>
