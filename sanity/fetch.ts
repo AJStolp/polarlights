@@ -28,6 +28,6 @@ export async function sanityFetch<T>({
   return client
     .withConfig({ stega: { enabled: false } })
     .fetch<T>(query, params, {
-      next: { revalidate: 60, tags },
+      next: { revalidate: 0, tags },
     });
 }
