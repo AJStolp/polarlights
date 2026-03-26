@@ -45,18 +45,19 @@ export const servicesPage = defineType({
               options: { hotspot: true },
             }),
             defineField({
-              name: "imageFit",
-              title: "Image Fit",
+              name: "imageSize",
+              title: "Image Size",
               type: "string",
-              description: "Use 'Contain' for floor plans or schematics to show the full image proportionally.",
+              description: "Controls image width. 'Full' fills the area (crops to fit). Other sizes keep the image proportional and centered.",
               options: {
                 list: [
-                  { title: "Cover", value: "cover" },
-                  { title: "Contain", value: "contain" },
+                  { title: "Full", value: "full" },
+                  { title: "Large (75%)", value: "large" },
+                  { title: "Medium (50%)", value: "medium" },
                 ],
                 layout: "radio",
               },
-              initialValue: "cover",
+              initialValue: "full",
             }),
           ],
           preview: {
