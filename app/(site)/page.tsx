@@ -64,8 +64,8 @@ export default async function Home() {
       .filter((item) => item.image)
       .map((item) => ({
         src: urlFor(item.image!).width(800).height(600).url(),
-        alt: item.title || "Featured item",
-        title: item.title || "Untitled",
+        alt: item.title || "",
+        title: item.title || "",
         location: item.location || "",
       }));
     if (mapped.length > 0) {
@@ -203,7 +203,7 @@ export default async function Home() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                 <div className="absolute bottom-0 left-0 right-0 p-4">
-                  <p className="text-white font-medium text-sm">{item.title}</p>
+                  {item.title && <p className="text-white font-medium text-sm">{item.title}</p>}
                   {item.location && (
                     <p className="text-white/70 text-xs mt-0.5">{item.location}</p>
                   )}
