@@ -81,7 +81,23 @@ export default async function ServicesPage() {
     // Fall back to defaults
   }
 
-  const servicesList =
+  const interiorExterior = {
+    title: "Interior & Exterior Photography",
+    subtitle: "Every angle, every detail",
+    description:
+      "Professional ground-level photography that complements our aerial services. We capture crisp, well-lit interior and exterior photos that highlight the best features of any property or space — from wide-angle room shots to detailed architectural exteriors.",
+    features: [
+      "HDR interior photography",
+      "Exterior & curb appeal shots",
+      "Twilight & golden hour sessions",
+      "Detail & feature close-ups",
+      "Professionally edited & delivered",
+    ],
+    image:
+      "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=600&fit=crop",
+  };
+
+  const cmsServices =
     page?.services && page.services.length > 0
       ? page.services.map((s) => ({
           title: s.title || "",
@@ -93,6 +109,8 @@ export default async function ServicesPage() {
             : "",
         }))
       : defaultServices;
+
+  const servicesList = [...cmsServices, interiorExterior];
 
   return (
     <>
