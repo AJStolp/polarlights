@@ -183,34 +183,37 @@ export default async function ServicesPage() {
                   Get a Quote
                 </Link>
               </div>
-              <div
-                className={`relative aspect-[4/3] rounded-2xl overflow-hidden flex items-center justify-center ${
-                  i % 2 === 1 ? "lg:order-1" : ""
-                }`}
-              >
-                {service.image && service.imageSize === "full" && (
+              {service.image && service.imageSize === "full" && (
+                <div
+                  className={`relative aspect-[4/3] rounded-2xl overflow-hidden ${
+                    i % 2 === 1 ? "lg:order-1" : ""
+                  }`}
+                >
                   <Image
                     src={service.image}
                     alt={service.title}
                     fill
                     className="object-cover"
                   />
-                )}
-                {service.image && service.imageSize !== "full" && (
-                  <div
-                    className={`relative h-full ${
+                </div>
+              )}
+              {service.image && service.imageSize !== "full" && (
+                <div
+                  className={`flex items-center justify-center rounded-2xl ${
+                    i % 2 === 1 ? "lg:order-1" : ""
+                  }`}
+                >
+                  <Image
+                    src={service.image}
+                    alt={service.title}
+                    width={800}
+                    height={600}
+                    className={`h-auto object-contain ${
                       service.imageSize === "large" ? "w-3/4" : "w-1/2"
                     } mx-auto`}
-                  >
-                    <Image
-                      src={service.image}
-                      alt={service.title}
-                      fill
-                      className="object-contain"
-                    />
-                  </div>
-                )}
-              </div>
+                  />
+                </div>
+              )}
             </div>
           ))}
         </div>
