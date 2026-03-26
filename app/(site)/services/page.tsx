@@ -56,7 +56,17 @@ const defaultServices = [
     image:
       "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=800&h=600&fit=crop",
   },
-  {
+];
+
+export default async function ServicesPage() {
+  let page = null;
+  try {
+    page = await getServicesPage();
+  } catch {
+    // Fall back to defaults
+  }
+
+  const interiorExterior = {
     title: "Interior & Exterior Photography",
     subtitle: "Every angle, every detail",
     description:
@@ -70,18 +80,9 @@ const defaultServices = [
     ],
     image:
       "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=600&fit=crop",
-  },
-];
+  };
 
-export default async function ServicesPage() {
-  let page = null;
-  try {
-    page = await getServicesPage();
-  } catch {
-    // Fall back to defaults
-  }
-
-  const servicesList =
+  const cmsServices =
     page?.services && page.services.length > 0
       ? page.services.map((s) => ({
           title: s.title || "",
@@ -93,6 +94,8 @@ export default async function ServicesPage() {
             : "",
         }))
       : defaultServices;
+
+  const servicesList = [...cmsServices, interiorExterior];
 
   return (
     <>
