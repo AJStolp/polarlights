@@ -102,10 +102,6 @@ export default async function ServicesPage() {
     imageSize: "full" as const,
   };
 
-  if (page?.services) {
-    console.log("RAW SANITY SERVICES:", JSON.stringify(page.services.map(s => ({ title: s.title, imageSize: s.imageSize })), null, 2));
-  }
-
   const cmsServices =
     page?.services && page.services.length > 0
       ? page.services.map((s) => ({
@@ -197,7 +193,7 @@ export default async function ServicesPage() {
                     src={service.image}
                     alt={service.title}
                     fill
-                    className="object-contain"
+                    className="object-contain rounded-2xl"
                   />
                 </div>
               )}
