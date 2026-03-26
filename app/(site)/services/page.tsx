@@ -107,6 +107,7 @@ export default async function ServicesPage() {
           image: s.image
             ? urlFor(s.image).width(800).height(600).url()
             : "",
+          imageFit: (s.imageFit || "cover") as "cover" | "contain",
         }))
       : defaultServices;
 
@@ -187,7 +188,7 @@ export default async function ServicesPage() {
                     src={service.image}
                     alt={service.title}
                     fill
-                    className="object-contain"
+                    className={service.imageFit === "contain" ? "object-contain" : "object-cover"}
                   />
                 )}
               </div>
