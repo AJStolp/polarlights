@@ -102,6 +102,10 @@ export default async function ServicesPage() {
     imageSize: "full" as const,
   };
 
+  if (page?.services) {
+    console.log("RAW SANITY SERVICES:", JSON.stringify(page.services.map(s => ({ title: s.title, imageSize: s.imageSize })), null, 2));
+  }
+
   const cmsServices =
     page?.services && page.services.length > 0
       ? page.services.map((s) => ({
