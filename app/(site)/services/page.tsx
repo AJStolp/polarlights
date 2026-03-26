@@ -187,7 +187,7 @@ export default async function ServicesPage() {
                     src={service.image}
                     alt={service.title}
                     fill
-                    className="object-cover"
+                    className="object-contain"
                   />
                 )}
               </div>
