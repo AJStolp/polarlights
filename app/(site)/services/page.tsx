@@ -25,7 +25,7 @@ const defaultServices = [
     ],
     image:
       "https://images.unsplash.com/photo-1473968512647-3e447244af8f?w=800&h=600&fit=crop",
-    imageFit: "cover" as const,
+    imageSize: "full" as const,
   },
   {
     title: "Cinematic Videography",
@@ -41,7 +41,7 @@ const defaultServices = [
     ],
     image:
       "https://images.unsplash.com/photo-1506947411487-a56738571f73?w=800&h=600&fit=crop",
-    imageFit: "cover" as const,
+    imageSize: "full" as const,
   },
   {
     title: "3D Matterport Tours",
@@ -57,7 +57,7 @@ const defaultServices = [
     ],
     image:
       "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=800&h=600&fit=crop",
-    imageFit: "cover" as const,
+    imageSize: "full" as const,
   },
   {
     title: "Interior & Exterior Photography",
@@ -73,7 +73,7 @@ const defaultServices = [
     ],
     image:
       "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=600&fit=crop",
-    imageFit: "cover" as const,
+    imageSize: "full" as const,
   },
 ];
 
@@ -99,7 +99,7 @@ export default async function ServicesPage() {
     ],
     image:
       "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=600&fit=crop",
-    imageFit: "cover" as const,
+    imageSize: "full" as const,
   };
 
   const cmsServices =
@@ -112,7 +112,7 @@ export default async function ServicesPage() {
           image: s.image
             ? urlFor(s.image).width(800).height(600).url()
             : "",
-          imageFit: (s.imageFit || "cover") as "cover" | "contain",
+          imageSize: (s.imageSize || "full") as "full" | "large" | "medium",
         }))
       : defaultServices;
 
@@ -184,17 +184,31 @@ export default async function ServicesPage() {
                 </Link>
               </div>
               <div
-                className={`relative aspect-[4/3] rounded-2xl overflow-hidden ${
+                className={`relative aspect-[4/3] rounded-2xl overflow-hidden flex items-center justify-center ${
                   i % 2 === 1 ? "lg:order-1" : ""
                 }`}
               >
-                {service.image && (
+                {service.image && service.imageSize === "full" && (
                   <Image
                     src={service.image}
                     alt={service.title}
                     fill
-                    className={service.imageFit === "contain" ? "object-contain" : "object-cover"}
+                    className="object-cover"
                   />
+                )}
+                {service.image && service.imageSize !== "full" && (
+                  <div
+                    className={`relative h-full ${
+                      service.imageSize === "large" ? "w-3/4" : "w-1/2"
+                    } mx-auto`}
+                  >
+                    <Image
+                      src={service.image}
+                      alt={service.title}
+                      fill
+                      className="object-contain"
+                    />
+                  </div>
                 )}
               </div>
             </div>
