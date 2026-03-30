@@ -2,6 +2,10 @@ import type { GlobalConfig } from "payload";
 
 export const HomePage: GlobalConfig = {
   slug: "home-page",
+  access: {
+    read: () => true,
+    update: ({ req: { user } }) => Boolean(user),
+  },
   admin: {
     group: "Pages",
   },
@@ -9,12 +13,20 @@ export const HomePage: GlobalConfig = {
     {
       name: "heroHeadline",
       type: "text",
-      admin: { description: 'First line of the hero (e.g. "Elevate Your")' },
+      access: {
+    read: () => true,
+    update: ({ req: { user } }) => Boolean(user),
+  },
+  admin: { description: 'First line of the hero (e.g. "Elevate Your")' },
     },
     {
       name: "heroAccent",
       type: "text",
-      admin: { description: 'The highlighted word (e.g. "Perspective")' },
+      access: {
+    read: () => true,
+    update: ({ req: { user } }) => Boolean(user),
+  },
+  admin: { description: 'The highlighted word (e.g. "Perspective")' },
     },
     {
       name: "heroDescription",

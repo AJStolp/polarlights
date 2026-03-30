@@ -25,13 +25,13 @@ for (const line of envContent.split("\n")) {
   if (!process.env[key]) process.env[key] = value;
 }
 
-const PAYLOAD_URL = "http://localhost:3000";
-const PAYLOAD_EMAIL = process.argv[2] || "";
-const PAYLOAD_PASSWORD = process.argv[3] || "";
+const PAYLOAD_URL = process.argv[2] || "http://localhost:3000";
+const PAYLOAD_EMAIL = process.argv[3] || "";
+const PAYLOAD_PASSWORD = process.argv[4] || "";
 
 if (!PAYLOAD_EMAIL || !PAYLOAD_PASSWORD) {
-  console.error("Usage: npx tsx scripts/migrate-sanity-to-payload.ts <email> <password>");
-  console.error("  email/password = your Payload admin credentials");
+  console.error("Usage: bunx tsx scripts/migrate-sanity-to-payload.ts <url> <email> <password>");
+  console.error("  e.g.: bunx tsx scripts/migrate-sanity-to-payload.ts https://polarlightsimaging.com email password");
   process.exit(1);
 }
 

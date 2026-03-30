@@ -6,6 +6,12 @@ export const VirtualTours: CollectionConfig = {
     useAsTitle: "title",
     defaultColumns: ["title", "location", "order"],
   },
+  access: {
+    read: () => true,
+    create: ({ req: { user } }) => Boolean(user),
+    update: ({ req: { user } }) => Boolean(user),
+    delete: ({ req: { user } }) => Boolean(user),
+  },
   defaultSort: "order",
   fields: [
     {

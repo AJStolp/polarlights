@@ -2,6 +2,10 @@ import type { GlobalConfig } from "payload";
 
 export const ServicesPage: GlobalConfig = {
   slug: "services-page",
+  access: {
+    read: () => true,
+    update: ({ req: { user } }) => Boolean(user),
+  },
   admin: {
     group: "Pages",
   },
@@ -54,7 +58,11 @@ export const ServicesPage: GlobalConfig = {
             { label: "Large (75%)", value: "large" },
             { label: "Medium (50%)", value: "medium" },
           ],
-          admin: {
+          access: {
+    read: () => true,
+    update: ({ req: { user } }) => Boolean(user),
+  },
+  admin: {
             description:
               "Controls image width. 'Full' fills the area (crops to fit). Other sizes keep the image proportional and centered.",
           },

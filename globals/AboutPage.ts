@@ -2,6 +2,10 @@ import type { GlobalConfig } from "payload";
 
 export const AboutPage: GlobalConfig = {
   slug: "about-page",
+  access: {
+    read: () => true,
+    update: ({ req: { user } }) => Boolean(user),
+  },
   admin: {
     group: "Pages",
   },
@@ -26,7 +30,11 @@ export const AboutPage: GlobalConfig = {
     {
       name: "storyParagraphs",
       type: "array",
-      admin: { description: "Each item is a separate paragraph." },
+      access: {
+    read: () => true,
+    update: ({ req: { user } }) => Boolean(user),
+  },
+  admin: { description: "Each item is a separate paragraph." },
       fields: [
         {
           name: "text",

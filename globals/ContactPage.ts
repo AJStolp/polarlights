@@ -2,6 +2,10 @@ import type { GlobalConfig } from "payload";
 
 export const ContactPage: GlobalConfig = {
   slug: "contact-page",
+  access: {
+    read: () => true,
+    update: ({ req: { user } }) => Boolean(user),
+  },
   admin: {
     group: "Pages",
   },
