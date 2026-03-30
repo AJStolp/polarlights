@@ -1,0 +1,8 @@
+{
+  "functions": {
+    "app/(payload)/api/[...slug]/route.ts": {
+      "maxDuration": 60,
+      "memory": 1024
+    }
+  }
+}
