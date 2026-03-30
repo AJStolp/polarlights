@@ -12,6 +12,7 @@ export interface PortfolioDisplayItem {
   alt: string;
   category: string;
   location?: string;
+  showTitle?: boolean;
 }
 
 interface PortfolioGridProps {
@@ -58,10 +59,10 @@ export default function PortfolioGrid({ items }: PortfolioGridProps) {
               fill
               className="object-cover transition-transform duration-500 group-hover:scale-105"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+            {(item.showTitle !== false) && <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />}
             <div className="absolute bottom-0 left-0 right-0 p-4">
-              {item.alt && <p className="text-white font-medium text-sm">{item.alt}</p>}
-              {item.location && (
+              {item.showTitle !== false && item.alt && <p className="text-white font-medium text-sm">{item.alt}</p>}
+              {item.showTitle !== false && item.location && (
                 <p className="text-white/70 text-xs mt-0.5">{item.location}</p>
               )}
             </div>

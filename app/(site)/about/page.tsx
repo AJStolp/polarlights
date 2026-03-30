@@ -1,8 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { getAboutPage } from "@/sanity/queries";
-import { urlFor } from "@/sanity/image";
+import { getPayloadClient } from "@/lib/payload";
+import type { Media } from "@/payload-types";
 
 export const metadata: Metadata = {
   title: "About | Polar Lights Imaging",
@@ -39,32 +39,34 @@ const defaultServiceAreas = [
 export default async function AboutPage() {
   let page = null;
   try {
-    page = await getAboutPage();
+    const payload = await getPayloadClient();
+    page = await payload.findGlobal({ slug: "about-page" });
   } catch {
     // Fall back to defaults
   }
 
-  const stats =
+  const stats: { value: string; label: string }[] =
     page?.stats && page.stats.length > 0
-      ? page.stats.map((s) => ({
+      ? page.stats.map((s: { value?: string | null; label?: string | null }) => ({
           value: s.value || "",
           label: s.label || "",
         }))
       : defaultStats;
 
-  const storyParagraphs =
+  const storyParagraphs: string[] =
     page?.storyParagraphs && page.storyParagraphs.length > 0
-      ? page.storyParagraphs
+      ? page.storyParagraphs.map((p: { text?: string | null }) => p.text || "")
       : defaultStory;
 
-  const serviceAreas =
+  const serviceAreas: string[] =
     page?.serviceAreas && page.serviceAreas.length > 0
-      ? page.serviceAreas
+      ? page.serviceAreas.map((a: { area?: string | null }) => a.area || "")
       : defaultServiceAreas;
 
-  const storyImage = page?.storyImage
-    ? urlFor(page.storyImage).width(800).height(600).url()
-    : "https://images.unsplash.com/photo-1527977966376-1c8408f9f108?w=800&h=600&fit=crop";
+  const storyImageMedia = page?.storyImage as Media | undefined;
+  const storyImage = storyImageMedia?.sizes?.card?.url
+    || storyImageMedia?.url
+    || "https://images.unsplash.com/photo-1527977966376-1c8408f9f108?w=800&h=600&fit=crop";
 
   return (
     <>

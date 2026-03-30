@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
-import { getFeaturedItems, getHomePage } from "@/sanity/queries";
-import { urlFor } from "@/sanity/image";
+import { getPayloadClient } from "@/lib/payload";
+import type { Media } from "@/payload-types";
 
 const services = [
   {
@@ -53,21 +53,32 @@ export default async function Home() {
   let page = null;
 
   try {
-    page = await getHomePage();
+    const payload = await getPayloadClient();
+    page = await payload.findGlobal({ slug: "home-page" });
   } catch {
     // Fall back to defaults
   }
 
   try {
-    const sanityFeatured = await getFeaturedItems();
-    const mapped = sanityFeatured
+    const payload = await getPayloadClient();
+    const result = await payload.find({
+      collection: "portfolio-items",
+      where: { featured: { equals: true } },
+      sort: "order",
+      limit: 6,
+    });
+    const mapped = result.docs
       .filter((item) => item.image)
-      .map((item) => ({
-        src: urlFor(item.image!).width(800).height(600).url(),
-        alt: item.title || "",
-        title: item.title || "",
-        location: item.location || "",
-      }));
+      .map((item) => {
+        const imageMedia = item.image as Media;
+        const showTitle = (item as Record<string, unknown>).showTitle as boolean | undefined;
+        return {
+          src: imageMedia?.sizes?.card?.url || imageMedia?.url || "",
+          alt: item.title || "",
+          title: showTitle ? (item.title || "") : "",
+          location: showTitle ? (item.location || "") : "",
+        };
+      });
     if (mapped.length > 0) {
       featuredWork = mapped;
     }
@@ -75,9 +86,10 @@ export default async function Home() {
     // Fall back to placeholders
   }
 
-  const heroImage = page?.heroImage
-    ? urlFor(page.heroImage).width(1920).height(1080).url()
-    : defaultHeroImage;
+  const heroImageMedia = page?.heroImage as Media | undefined;
+  const heroImage = heroImageMedia?.sizes?.hero?.url
+    || heroImageMedia?.url
+    || defaultHeroImage;
 
   return (
     <>

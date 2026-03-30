@@ -1,8 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import type { Metadata } from "next";
-import { getVirtualTours } from "@/sanity/queries";
-import { urlFor } from "@/sanity/image";
+import { getPayloadClient } from "@/lib/payload";
+import type { Media, VirtualTour } from "@/payload-types";
 
 export const metadata: Metadata = {
   title: "Virtual Tours | Polar Lights Imaging",
@@ -11,10 +11,16 @@ export const metadata: Metadata = {
 };
 
 export default async function VirtualToursPage() {
-  let tours: Awaited<ReturnType<typeof getVirtualTours>> = [];
+  let tours: VirtualTour[] = [];
 
   try {
-    tours = await getVirtualTours();
+    const payload = await getPayloadClient();
+    const result = await payload.find({
+      collection: "virtual-tours",
+      sort: "order",
+      limit: 50,
+    });
+    tours = result.docs as VirtualTour[];
   } catch {
     // Fall back to empty
   }
@@ -66,81 +72,86 @@ export default async function VirtualToursPage() {
             </div>
           ) : (
             <div className="space-y-20">
-              {tours.map((tour) => (
-                <div
-                  key={tour._id}
-                  className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden"
-                >
-                  {/* Iframe embed */}
-                  {tour.embedUrl && (
-                    <div className="relative w-full aspect-video">
-                      <iframe
-                        src={tour.embedUrl}
-                        title={tour.title}
-                        className="absolute inset-0 w-full h-full"
-                        allowFullScreen
-                        loading="lazy"
-                      />
-                    </div>
-                  )}
+              {tours.map((tour) => {
+                const thumbnailMedia = tour.thumbnail as Media | undefined;
+                const thumbnailUrl = thumbnailMedia?.sizes?.hero?.url || thumbnailMedia?.url;
 
-                  {/* Thumbnail fallback when no embed */}
-                  {!tour.embedUrl && tour.thumbnail && (
-                    <div className="relative w-full aspect-video">
-                      <Image
-                        src={urlFor(tour.thumbnail).width(1200).height(675).url()}
-                        alt={tour.title}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-                  )}
+                return (
+                  <div
+                    key={tour.id}
+                    className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden"
+                  >
+                    {/* Iframe embed */}
+                    {tour.embedUrl && (
+                      <div className="relative w-full aspect-video">
+                        <iframe
+                          src={tour.embedUrl}
+                          title={tour.title}
+                          className="absolute inset-0 w-full h-full"
+                          allowFullScreen
+                          loading="lazy"
+                        />
+                      </div>
+                    )}
 
-                  {/* Info */}
-                  <div className="p-6 md:p-8">
-                    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-                      <div>
-                        <h2 className="text-2xl font-bold text-gray-900">
-                          {tour.title}
-                        </h2>
-                        {tour.location && (
-                          <p className="text-accent text-sm font-medium mt-1">
-                            {tour.location}
-                          </p>
-                        )}
-                        {tour.description && (
-                          <p className="text-gray-500 mt-3 leading-relaxed max-w-2xl">
-                            {tour.description}
-                          </p>
+                    {/* Thumbnail fallback when no embed */}
+                    {!tour.embedUrl && thumbnailUrl && (
+                      <div className="relative w-full aspect-video">
+                        <Image
+                          src={thumbnailUrl}
+                          alt={tour.title}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                    )}
+
+                    {/* Info */}
+                    <div className="p-6 md:p-8">
+                      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+                        <div>
+                          <h2 className="text-2xl font-bold text-gray-900">
+                            {tour.title}
+                          </h2>
+                          {tour.location && (
+                            <p className="text-accent text-sm font-medium mt-1">
+                              {tour.location}
+                            </p>
+                          )}
+                          {tour.description && (
+                            <p className="text-gray-500 mt-3 leading-relaxed max-w-2xl">
+                              {tour.description}
+                            </p>
+                          )}
+                        </div>
+                        {tour.externalLink && (
+                          <a
+                            href={tour.externalLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 bg-accent text-white text-sm font-medium px-6 py-3 rounded-full hover:bg-accent-dark transition-colors shrink-0"
+                          >
+                            View Full Tour
+                            <svg
+                              className="w-4 h-4"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                              strokeWidth={2}
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
+                              />
+                            </svg>
+                          </a>
                         )}
                       </div>
-                      {tour.externalLink && (
-                        <a
-                          href={tour.externalLink}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 bg-accent text-white text-sm font-medium px-6 py-3 rounded-full hover:bg-accent-dark transition-colors shrink-0"
-                        >
-                          View Full Tour
-                          <svg
-                            className="w-4 h-4"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            strokeWidth={2}
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
-                            />
-                          </svg>
-                        </a>
-                      )}
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
