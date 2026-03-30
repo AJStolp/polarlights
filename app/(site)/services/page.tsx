@@ -197,7 +197,7 @@ export default async function ServicesPage() {
                     src={service.image}
                     alt={service.title}
                     fill
-                    className="object-contain rounded-2xl"
+                    className="object-cover"
                   />
                 </div>
               )}
