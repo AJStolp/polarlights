@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getContactPage } from "@/sanity/queries";
+import { getPayloadClient } from "@/lib/payload";
 import ContactForm from "@/components/ContactForm";
 
 export const metadata: Metadata = {
@@ -11,7 +11,8 @@ export const metadata: Metadata = {
 export default async function ContactPage() {
   let page = null;
   try {
-    page = await getContactPage();
+    const payload = await getPayloadClient();
+    page = await payload.findGlobal({ slug: "contact-page" });
   } catch {
     // Fall back to defaults
   }

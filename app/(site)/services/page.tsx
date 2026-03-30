@@ -1,8 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import type { Metadata } from "next";
-import { getServicesPage } from "@/sanity/queries";
-import { urlFor } from "@/sanity/image";
+import { getPayloadClient } from "@/lib/payload";
+import type { Media } from "@/payload-types";
 
 export const metadata: Metadata = {
   title: "Services | Polar Lights Imaging",
@@ -80,7 +80,8 @@ const defaultServices = [
 export default async function ServicesPage() {
   let page = null;
   try {
-    page = await getServicesPage();
+    const payload = await getPayloadClient();
+    page = await payload.findGlobal({ slug: "services-page" });
   } catch {
     // Fall back to defaults
   }
@@ -102,21 +103,24 @@ export default async function ServicesPage() {
     imageSize: "full" as const,
   };
 
-  const cmsServices =
+  type ServiceDisplay = { title: string; subtitle: string; description: string; features: string[]; image: string; imageSize: "full" | "large" | "medium" };
+
+  const cmsServices: ServiceDisplay[] =
     page?.services && page.services.length > 0
-      ? page.services.map((s) => ({
-          title: s.title || "",
-          subtitle: s.subtitle || "",
-          description: s.description || "",
-          features: s.features || [],
-          image: s.image
-            ? urlFor(s.image).width(800).url()
-            : "",
-          imageSize: (s.imageSize || "full") as "full" | "large" | "medium",
-        }))
+      ? page.services.map((s: { title?: string | null; subtitle?: string | null; description?: string | null; features?: { feature?: string | null }[] | null; image?: Media | number | null; imageSize?: string | null }) => {
+          const imageMedia = s.image as Media | undefined;
+          return {
+            title: s.title || "",
+            subtitle: s.subtitle || "",
+            description: s.description || "",
+            features: (s.features || []).map((f: { feature?: string | null }) => f.feature || ""),
+            image: imageMedia?.sizes?.card?.url || imageMedia?.url || "",
+            imageSize: (s.imageSize || "full") as "full" | "large" | "medium",
+          };
+        })
       : defaultServices;
 
-  const servicesList = [...cmsServices, interiorExterior];
+  const servicesList: ServiceDisplay[] = [...cmsServices, interiorExterior];
 
   return (
     <>

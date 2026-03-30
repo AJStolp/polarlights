@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import PortfolioGrid from "@/components/PortfolioGrid";
 import type { PortfolioDisplayItem } from "@/components/PortfolioGrid";
-import { getPortfolioItems } from "@/sanity/queries";
-import { urlFor } from "@/sanity/image";
+import { getPayloadClient } from "@/lib/payload";
+import type { Media } from "@/payload-types";
 
 export const metadata: Metadata = {
   title: "Portfolio | Polar Lights Imaging",
@@ -29,16 +29,26 @@ export default async function PortfolioPage() {
   let items: PortfolioDisplayItem[];
 
   try {
-    const sanityItems = await getPortfolioItems();
-    const mapped = sanityItems
+    const payload = await getPayloadClient();
+    const result = await payload.find({
+      collection: "portfolio-items",
+      sort: "order",
+      limit: 100,
+    });
+    const mapped = result.docs
       .filter((item) => item.image)
-      .map((item) => ({
-        id: item._id,
-        src: urlFor(item.image!).width(800).height(600).url(),
-        alt: item.title || "",
-        category: item.category || "Aerial Photo",
-        location: item.location,
-      }));
+      .map((item) => {
+        const imageMedia = item.image as Media;
+        const showTitle = (item as Record<string, unknown>).showTitle as boolean | undefined;
+        return {
+          id: String(item.id),
+          src: imageMedia?.sizes?.card?.url || imageMedia?.url || "",
+          alt: item.title || "",
+          category: (item.category || "Aerial Photo") as "Aerial Photo" | "Video" | "3D Tours",
+          location: item.location || undefined,
+          showTitle: showTitle || false,
+        };
+      });
     items = mapped.length > 0 ? mapped : placeholderItems;
   } catch {
     items = placeholderItems;

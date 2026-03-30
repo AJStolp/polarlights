@@ -44,21 +44,6 @@ export const servicesPage = defineType({
               type: "image",
               options: { hotspot: true },
             }),
-            defineField({
-              name: "imageSize",
-              title: "Image Size",
-              type: "string",
-              description: "Controls image width. 'Full' fills the area (crops to fit). Other sizes keep the image proportional and centered.",
-              options: {
-                list: [
-                  { title: "Full", value: "full" },
-                  { title: "Large (75%)", value: "large" },
-                  { title: "Medium (50%)", value: "medium" },
-                ],
-                layout: "radio",
-              },
-              initialValue: "full",
-            }),
           ],
           preview: {
             select: { title: "title", media: "image" },

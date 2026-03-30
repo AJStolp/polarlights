@@ -1,21 +1,25 @@
-import { draftMode } from "next/headers";
-import { VisualEditing } from "next-sanity/visual-editing";
+import { Inter } from "next/font/google";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import "../globals.css";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+});
 
 export default async function SiteLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { isEnabled } = await draftMode();
-
   return (
-    <>
-      <Navbar />
-      <main className="pt-16">{children}</main>
-      <Footer />
-      {isEnabled && <VisualEditing />}
-    </>
+    <html lang="en">
+      <body className={`${inter.variable} font-sans antialiased`}>
+        <Navbar />
+        <main className="pt-16">{children}</main>
+        <Footer />
+      </body>
+    </html>
   );
 }
