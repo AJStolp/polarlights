@@ -191,13 +191,13 @@ export default async function ServicesPage() {
                 <div
                   className={`relative aspect-[4/3] rounded-2xl overflow-hidden ${
                     i % 2 === 1 ? "lg:order-1" : ""
-                  }`}
+                  } ${service.imageSize !== "full" ? "bg-white" : ""}`}
                 >
                   <Image
                     src={service.image}
                     alt={service.title}
                     fill
-                    className="object-cover"
+                    className={service.imageSize === "full" ? "object-cover" : "object-contain"}
                   />
                 </div>
               )}
