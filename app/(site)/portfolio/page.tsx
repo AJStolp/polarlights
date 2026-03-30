@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import PortfolioGrid from "@/components/PortfolioGrid";
-import type { PortfolioDisplayItem } from "@/components/PortfolioGrid";
+import type { PortfolioDisplayItem, VirtualTourDisplayItem } from "@/components/PortfolioGrid";
 import { getPayloadClient } from "@/lib/payload";
-import type { Media } from "@/payload-types";
+import type { Media, VirtualTour } from "@/payload-types";
 
 export const metadata: Metadata = {
   title: "Portfolio | Polar Lights Imaging",
@@ -17,16 +17,11 @@ const placeholderItems: PortfolioDisplayItem[] = [
   { id: "p4", src: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=800&h=600&fit=crop", alt: "City skyline aerial", category: "Video", location: "Menominee, MI" },
   { id: "p5", src: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&h=600&fit=crop", alt: "Rural landscape aerial", category: "Aerial Photo", location: "New London, WI" },
   { id: "p6", src: "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&h=600&fit=crop", alt: "Mountain aerial view", category: "Aerial Photo", location: "Houghton, MI" },
-  { id: "p7", src: "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=800&h=600&fit=crop", alt: "Interior 3D tour", category: "3D Tours", location: "Kimberly, WI" },
-  { id: "p8", src: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=600&fit=crop", alt: "Real estate property", category: "3D Tours", location: "Waupaca, WI" },
-  { id: "p9", src: "https://images.unsplash.com/photo-1494526585095-c41746248156?w=800&h=600&fit=crop", alt: "Property exterior", category: "Aerial Photo", location: "Holy Hill, WI" },
-  { id: "p10", src: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=800&h=600&fit=crop", alt: "Nature aerial", category: "Video", location: "Michigamme, MI" },
-  { id: "p11", src: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&h=600&fit=crop", alt: "Real estate interior", category: "3D Tours", location: "Menominee, MI" },
-  { id: "p12", src: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800&h=600&fit=crop", alt: "Valley landscape", category: "Aerial Photo", location: "Kitch-iti-kipi, MI" },
 ];
 
 export default async function PortfolioPage() {
   let items: PortfolioDisplayItem[];
+  let virtualTours: VirtualTourDisplayItem[] = [];
 
   try {
     const payload = await getPayloadClient();
@@ -54,6 +49,29 @@ export default async function PortfolioPage() {
     items = placeholderItems;
   }
 
+  try {
+    const payload = await getPayloadClient();
+    const toursResult = await payload.find({
+      collection: "virtual-tours",
+      sort: "order",
+      limit: 50,
+    });
+    virtualTours = (toursResult.docs as VirtualTour[]).map((tour) => {
+      const thumbnailMedia = tour.thumbnail as Media | undefined;
+      return {
+        id: String(tour.id),
+        title: tour.title,
+        description: tour.description || undefined,
+        thumbnailSrc: thumbnailMedia?.url || undefined,
+        embedUrl: tour.embedUrl || undefined,
+        externalLink: tour.externalLink || undefined,
+        location: tour.location || undefined,
+      };
+    });
+  } catch {
+    // No tours
+  }
+
   return (
     <>
       {/* Header */}
@@ -72,7 +90,7 @@ export default async function PortfolioPage() {
       {/* Gallery */}
       <section className="py-16">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <PortfolioGrid items={items} />
+          <PortfolioGrid items={items} virtualTours={virtualTours} />
         </div>
       </section>
     </>
