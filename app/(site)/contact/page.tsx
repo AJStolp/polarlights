@@ -3,9 +3,16 @@ import { getPayloadClient } from "@/lib/payload";
 import ContactForm from "@/components/ContactForm";
 
 export const metadata: Metadata = {
-  title: "Contact | Polar Lights Imaging",
+  title: "Contact",
   description:
     "Get in touch with Polar Lights Imaging for drone photography, aerial video, and 3D Matterport tour services.",
+  openGraph: {
+    title: "Contact Us — Polar Lights Imaging",
+    description:
+      "Get in touch with Polar Lights Imaging for drone photography, aerial video, and 3D Matterport tour services.",
+    url: "/contact",
+  },
+  alternates: { canonical: "/contact" },
 };
 
 export default async function ContactPage() {

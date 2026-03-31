@@ -3,11 +3,19 @@ import Image from "next/image";
 import type { Metadata } from "next";
 import { getPayloadClient } from "@/lib/payload";
 import type { Media } from "@/payload-types";
+import { ServiceJsonLd } from "@/lib/structured-data";
 
 export const metadata: Metadata = {
-  title: "Services | Polar Lights Imaging",
+  title: "Services",
   description:
     "Drone photography, cinematic aerial video, and Matterport 3D virtual tours for real estate, events, and more.",
+  openGraph: {
+    title: "Our Services — Polar Lights Imaging",
+    description:
+      "Drone photography, cinematic aerial video, and Matterport 3D virtual tours for real estate, events, and more.",
+    url: "/services",
+  },
+  alternates: { canonical: "/services" },
 };
 
 const defaultServices = [
@@ -124,6 +132,13 @@ export default async function ServicesPage() {
 
   return (
     <>
+      {servicesList.map((service) => (
+        <ServiceJsonLd
+          key={service.title}
+          name={service.title}
+          description={service.description}
+        />
+      ))}
       {/* Header */}
       <section className="py-24 bg-gray-50">
         <div className="max-w-7xl mx-auto px-6 lg:px-8 text-center">

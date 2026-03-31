@@ -5,9 +5,16 @@ import { getPayloadClient } from "@/lib/payload";
 import type { Media, VirtualTour } from "@/payload-types";
 
 export const metadata: Metadata = {
-  title: "Virtual Tours | Polar Lights Imaging",
+  title: "Virtual Tours",
   description:
     "Explore immersive 3D Matterport virtual tours of properties and spaces captured by Polar Lights Imaging.",
+  openGraph: {
+    title: "3D Virtual Tours — Polar Lights Imaging",
+    description:
+      "Explore immersive 3D Matterport virtual tours of properties and spaces captured by Polar Lights Imaging.",
+    url: "/virtual-tours",
+  },
+  alternates: { canonical: "/virtual-tours" },
 };
 
 export default async function VirtualToursPage() {

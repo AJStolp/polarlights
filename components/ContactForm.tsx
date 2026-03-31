@@ -48,13 +48,14 @@ export default function ContactForm({
       {/* Form */}
       <div>
         {status === "sent" ? (
-          <div className="bg-accent/5 border border-accent/20 rounded-2xl p-8 text-center">
+          <div className="bg-accent/5 border border-accent/20 rounded-2xl p-8 text-center" role="status" aria-live="polite">
             <svg
               className="w-12 h-12 text-accent mx-auto mb-4"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
               strokeWidth={1.5}
+              aria-hidden="true"
             >
               <path
                 strokeLinecap="round"
@@ -143,7 +144,7 @@ export default function ContactForm({
             </div>
 
             {status === "error" && (
-              <p className="text-red-500 text-sm">
+              <p className="text-red-500 text-sm" role="alert" aria-live="assertive">
                 Something went wrong. Please try again or email us directly.
               </p>
             )}

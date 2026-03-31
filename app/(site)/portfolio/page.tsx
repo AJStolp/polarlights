@@ -5,9 +5,16 @@ import { getPayloadClient } from "@/lib/payload";
 import type { Media, VirtualTour } from "@/payload-types";
 
 export const metadata: Metadata = {
-  title: "Portfolio | Polar Lights Imaging",
+  title: "Portfolio",
   description:
     "Browse our portfolio of aerial drone photography, cinematic video, and Matterport 3D virtual tours.",
+  openGraph: {
+    title: "Portfolio — Polar Lights Imaging",
+    description:
+      "Browse our portfolio of aerial drone photography, cinematic video, and Matterport 3D virtual tours.",
+    url: "/portfolio",
+  },
+  alternates: { canonical: "/portfolio" },
 };
 
 const placeholderItems: PortfolioDisplayItem[] = [

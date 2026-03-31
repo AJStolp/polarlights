@@ -5,9 +5,16 @@ import { getPayloadClient } from "@/lib/payload";
 import type { Media } from "@/payload-types";
 
 export const metadata: Metadata = {
-  title: "About | Polar Lights Imaging",
+  title: "About",
   description:
     "Learn about Polar Lights Imaging — professional drone photography and 3D tours serving Wisconsin and Michigan's Upper Peninsula.",
+  openGraph: {
+    title: "About Polar Lights Imaging",
+    description:
+      "Learn about Polar Lights Imaging — professional drone photography and 3D tours serving Wisconsin and Michigan's Upper Peninsula.",
+    url: "/about",
+  },
+  alternates: { canonical: "/about" },
 };
 
 const defaultStats = [
